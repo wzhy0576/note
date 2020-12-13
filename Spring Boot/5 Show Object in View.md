@@ -1,4 +1,4 @@
-# Show an object in view
+# Show an object in view with Thymeleaf
 
 path : resources/templates/mvcdemo.html
 
