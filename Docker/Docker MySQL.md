@@ -1,7 +1,3 @@
-# 环境 Ubuntu18.04 server
-
-
-
 ```sh
 sudo docker pull mysql
 ```
