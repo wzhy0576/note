@@ -876,6 +876,10 @@ lsblk -o NAME,SIZE,FSTYPE,TYPE,MOUNTPOINT
 sudo mdadm --create --verbose /dev/md1 --level=1 --raid-devices=2 /dev/sdb /dev/sdc
 ```
 
+```sh
+sudo mkfs -t ext4 /dev/md1
+```
+
 
 
 - 挂载
@@ -926,4 +930,8 @@ nameserver 127.0.0.1
 ```
 
 
+
+```sh
+sudo /etc/init.d/resolvconf restart 
+```
 
