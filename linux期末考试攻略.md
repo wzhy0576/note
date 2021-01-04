@@ -1,4 +1,4 @@
-# Version 2
+# 终极版
 
 
 
@@ -29,10 +29,10 @@ sudo vi /etc/network/interfaces
 ```sh
 auto enp0s8
 iface enp0s8 inet static
-address 192.168.56.101
-netmask 255.255.0.0
+address 192.168.0.101
+netmask 255.255.255.0
 # 不要配网关！！！
-# vitualbox配置 ip:192.168.56.1  mask:255.255.255.0
+# vitualbox配置 ip:192.168.0.1  mask:255.255.255.0
 ```
 
 重启，ifconfig查看，网卡启动成功，主机可以ping通
@@ -66,7 +66,7 @@ neo ALL=(ALL:ALL) ALL
 - 换用cmd登录(方便复制粘贴)
 
 ```sh
-ssh neo@192.168.56.101
+ssh neo@192.168.0.101
 ```
 
 
@@ -150,7 +150,7 @@ zone "oasis.com"{
 };
 
 
-zone "56.168.192.in-addr.arpa"{
+zone "0.168.192.in-addr.arpa"{
 
     type master;
 
@@ -186,14 +186,14 @@ $ORIGIN oasis.com.
 
 @ IN NS ns
 
-@ IN A 192.168.56.101
+@ IN A 192.168.0.101
 
-mail IN A 192.168.56.101
-web IN A 192.168.56.101
-ns IN A 192.168.56.101
-race IN A 192.168.56.101
-shining IN A 192.168.56.101
-game IN A 192.168.56.101
+mail IN A 192.168.0.101
+web IN A 192.168.0.101
+ns IN A 192.168.0.101
+race IN A 192.168.0.101
+shining IN A 192.168.0.101
+game IN A 192.168.0.101
 ```
 
 
@@ -258,7 +258,7 @@ sudo /etc/init.d/bind9 restart
 # 正向
 ping web.oasis.com
 # 反向
-host 192.168.56.101
+host 192.168.0.101
 ```
 
 
@@ -276,7 +276,6 @@ sudo apt install nginx
 - 创建网站目录
 
 ```sh
-sudo vi /etc/nginx/sites-available/default
 sudo mkdir /var/www/race
 sudo mkdir /var/www/shining
 sudo mkdir /var/www/game
@@ -520,7 +519,7 @@ sudo vi /var/www/shining/index.php
 
 ```php
 <?php
-phpinfo();
+    phpinfo(INFO_LICENSE);
 ?>
 ```
 
@@ -543,24 +542,45 @@ cd /tmp
 wget http://172.18.5.74/download/jdk-8u112-linux-x64.tar.gz
 sudo mkdir /usr/lib/java
 sudo tar -C /usr/lib/java -xzf jdk-8u112-linux-x64.tar.gz
-sudo vi  ~/.bashrc
 ```
 
-添加
+
+
+```
+sudo vi ~/.profile 
+```
+
+```sh
+PATH="$HOME/bin:$HOME/.local/bin:$PATH"
+JAVA_HOME=/usr/lib/java/jdk1.8.0_112
+JRE_HOME=${JAVA_HOME}/jre
+CLASSPATH=.:${JAVA_HOME}/lib:${JRE_HOME}/lib
+TOMCAT_HOME=/var/www/game/tomcat/apache-tomcat-8.5.61
+CATALINA_HOME=/var/www/game/tomcat/apache-tomcat-8.5.61
+
+```
+
+```sh
+source ~/.profile 
+```
+
+
+
+```sh
+sudo vi  ~/.bashrc
+```
 
 ```sh
 export JAVA_HOME=/usr/lib/java/jdk1.8.0_112
 export JRE_HOME=${JAVA_HOME}/jre
 export CLASSPATH=.:${JAVA_HOME}/lib:${JRE_HOME}/lib
 export PATH=${JAVA_HOME}/bin:$PATH
+export TOMCAT_HOME=/var/www/game/tomcat/apache-tomcat-8.5.61
+export CATALINA_HOME=/var/www/game/tomcat/apache-tomcat-8.5.61
 ```
 
-
-
-**重启**
-
-```
-reboot
+```sh
+source ~/.bashrc
 ```
 
 测试
@@ -576,10 +596,10 @@ java -version
 ```sh
 cd /tmp
 wget https://mirror.bit.edu.cn/apache/tomcat/tomcat-8/v8.5.61/bin/apache-tomcat-8.5.61.tar.gz
-mkdir ~/tomcat
-cp apache-tomcat-8.5.61.tar.gz ~/tomcat/
-cd ~/tomcat/
-tar -zxvf apache-tomcat-8.5.61.tar.gz
+sudo mkdir /var/www/game/tomcat
+sudo cp apache-tomcat-8.5.61.tar.gz /var/www/game/tomcat
+cd /var/www/game/tomcat
+sudo tar -zxvf apache-tomcat-8.5.61.tar.gz
 ```
 
 
@@ -591,8 +611,16 @@ sudo vi /etc/profile
 ```
 
 ```sh
-export TOMCAT_HOME=/home/neo/tomcat/apache-tomcat-8.5.61
-export CATALINA_HOME=/home/neo/tomcat/apache-tomcat-8.5.61
+JAVA_HOME=/usr/lib/java/jdk1.8.0_112
+JRE_HOME=${JAVA_HOME}/jre
+CLASSPATH=.:${JAVA_HOME}/lib:${JRE_HOME}/lib
+PATH=${JAVA_HOME}/bin:$PATH
+TOMCAT_HOME=/var/www/game/tomcat/apache-tomcat-8.5.61
+CATALINA_HOME=/var/www/game/tomcat/apache-tomcat-8.5.61
+```
+
+```sh
+source /etc/profile
 ```
 
 
@@ -600,8 +628,8 @@ export CATALINA_HOME=/home/neo/tomcat/apache-tomcat-8.5.61
 - 启动Tomcat
 
 ```sh
-cd ~/tomcat/apache-tomcat-8.5.61/bin
- ./startup.sh
+sudo -s
+bash /var/www/game/tomcat/apache-tomcat-8.5.61/bin/startup.sh
 ```
 
 
@@ -609,14 +637,53 @@ cd ~/tomcat/apache-tomcat-8.5.61/bin
 - tomcat自启   （用户级别）
 
 ```sh
-sudo vi ~/.bashrc
+sudo vi /var/www/game/tomcat/apache-tomcat-8.5.61/bin/startup.sh
 ```
 
-add
+```sh
+export JAVA_HOME=/usr/lib/java/jdk1.8.0_112
+export JRE_HOME=${JAVA_HOME}/jre
+export CLASSPATH=.:${JAVA_HOME}/lib:${JRE_HOME}/lib
+export PATH=${JAVA_HOME}/bin:$PATH
+export TOMCAT_HOME=/var/www/game/tomcat/apache-tomcat-8.5.61
+export CATALINA_HOME=/var/www/game/tomcat/apache-tomcat-8.5.61
+```
 
+
+
+```sh
+sudo vi /var/www/game/tomcat/apache-tomcat-8.5.61/bin/shutdown.sh
 ```
-/home/neo/tomcat/apache-tomcat-8.5.61/bin/startup.sh
+
+```sh
+export JAVA_HOME=/usr/lib/java/jdk1.8.0_112
+export JRE_HOME=${JAVA_HOME}/jre
+export CLASSPATH=.:${JAVA_HOME}/lib:${JRE_HOME}/lib
+export PATH=${JAVA_HOME}/bin:$PATH
+export TOMCAT_HOME=/var/www/game/tomcat/apache-tomcat-8.5.61
+export CATALINA_HOME=/var/www/game/tomcat/apache-tomcat-8.5.61
 ```
+
+```sh
+sudo vi /etc/rc.local
+```
+
+```sh
+export JAVA_HOME=/usr/lib/java/jdk1.8.0_112
+export JRE_HOME=${JAVA_HOME}/jre
+export CLASSPATH=.:${JAVA_HOME}/lib:${JRE_HOME}/lib
+export PATH=${JAVA_HOME}/bin:$PATH
+export TOMCAT_HOME=/var/www/game/tomcat/apache-tomcat-8.5.61
+export CATALINA_HOME=/var/www/game/tomcat/apache-tomcat-8.5.61
+/var/www/game/tomcat/apache-tomcat-8.5.61/bin/startup.sh
+exit 0
+```
+
+```sh
+reboot
+```
+
+https://www.cnblogs.com/tutubaobao/p/10277418.html
 
 
 
@@ -627,12 +694,29 @@ sudo vi /etc/nginx/sites-available/game
 ```
 
 ```sh
-location / {
+index index.jsp index.html index.htm index.nginx-debian.html;
+
+server_name game.oasis.com;
+
+        location / {
                 # First attempt to serve request as file, then
                 # as directory, then fall back to displaying a 404.
-                proxy_pass http://192.168.56.101:8080;
+                proxy_pass http://192.168.0.101:8080;
                 try_files $uri $uri/ =404;
         }
+
+        location ~* {
+            proxy_pass http://192.168.0.101:8080;
+            proxy_redirect off;
+            proxy_set_header HOST $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        }
+
+        location ~* \.(htacess|tar.gz|tar|zip|sql)$ {
+                return http://192.168.0.101:8080;
+        }
+
 ```
 
 
@@ -667,7 +751,7 @@ sudo apt install mailutils
 - 发邮件
 
 ```sh
-echo 'it is only a test' | mail -s "test eamil" neo@oasis.com 
+echo 'it is only a test' | sendmail "test eamil" neo@oasis.com 
 ```
 
 
@@ -682,7 +766,7 @@ sudo apt install mysql-server
 
 
 
-- 改端口
+- 改端口 (不用改了)
 
 ```sh
 sudo vi /etc/mysql/mysql.conf.d/mysqld.cnf
@@ -777,7 +861,7 @@ sudo ufw status numbered
 
 # 11 RAID 1
 
-- 添加2块100MB的虚拟硬盘
+- 添加2块1GB的虚拟硬盘
 - 查看磁盘
 
 ```sh
@@ -786,10 +870,10 @@ lsblk -o NAME,SIZE,FSTYPE,TYPE,MOUNTPOINT
 
 
 
-- 创建md0   sdb    sdc根据实际情况换
+- 创建md1   sdb    sdc根据实际情况换
 
 ```sh
-sudo mdadm --create --verbose /dev/md0 --level=1 --raid-devices=2 /dev/sdb /dev/sdc
+sudo mdadm --create --verbose /dev/md1 --level=1 --raid-devices=2 /dev/sdb /dev/sdc
 ```
 
 
@@ -797,8 +881,8 @@ sudo mdadm --create --verbose /dev/md0 --level=1 --raid-devices=2 /dev/sdb /dev/
 - 挂载
 
 ```sh
-sudo mkdir -p /mnt/md0
-sudo mount /dev/md0 /mnt/md0
+sudo mkdir -p /mnt/md1
+sudo mount /dev/md1 /mnt/md1
 ```
 
 查看
@@ -814,7 +898,7 @@ df -h -x devtmpfs -x tmpfs
 ```sh
 sudo mdadm --detail --scan | sudo tee -a /etc/mdadm/mdadm.conf
 sudo update-initramfs -u
-echo '/dev/md0 /mnt/md0 ext4 defaults,nofail,discard 0 0' | sudo tee -a /etc/fstab
+echo '/dev/md1 /mnt/md1 ext4 defaults,nofail,discard 0 0' | sudo tee -a /etc/fstab
 ```
 
 
