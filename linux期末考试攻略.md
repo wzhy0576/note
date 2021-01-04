@@ -235,10 +235,28 @@ $TTL 604800
 
 - 重启bind9
 
+  永久
+  
+  ```sh
+sudo vi /etc/resolvconf/resolv.conf.d/tail
+  ```
+  
+  ```
+  nameserver 127.0.0.1
+  ```
+  
+  ```sh
+  sudo /etc/init.d/resolvconf restart 
+  ```
+  
+  
+  
+  临时
+  
   ```sh
   sudo vi /etc/resolv.conf
   ```
-
+  
   ```sh
   # 附加在最前面
   nameserver 127.0.0.1
@@ -909,7 +927,7 @@ echo '/dev/md1 /mnt/md1 ext4 defaults,nofail,discard 0 0' | sudo tee -a /etc/fst
 
 # 12 交卷准备
 
-- 重启
+- 重启，检查
 
 ```sh
 reboot
@@ -917,21 +935,7 @@ reboot
 
 
 
-- 修改本地DNS
-
 ```sh
-sudo vi /etc/resolv.conf
-```
 
-加在最前面
-
-```sh
-nameserver 127.0.0.1
-```
-
-
-
-```sh
-sudo /etc/init.d/resolvconf restart 
 ```
 
