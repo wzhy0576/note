@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Vue 测试实例</title>
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<style type="text/css">
+  .red {
+    background-color: red;
+  }
+  .green {
+    background-color: green;
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <p>{{ message }}</p>
+</div>
+<div id="mydiv">
+  <input type="text" v-model="inputVal"><button @click="addItem">添加</button><span>  {{ size }}</span>
+  <ul>
+    <li v-for="(item,index) in items" :key="item.id" :class="index % 2 == 0 ? 'red' : 'green'">{{ item.id }}--{{ item.mes }} <button @click="() => { deleteItem(index) }">删除</button></li>
+  </ul>
+</div>
+​
+<script>
+new Vue({
+  el: '#app',
+  data: {
+    message: 'Hello Vue.js!',
+  }
+})
+
+new Vue(
+  {
+    el:'#mydiv',
+    data: {
+      inputVal: '',
+      items: []
+    },
+    methods: {
+      addItem(e) {
+        const length = this.items.length
+        this.items.push({ id: length + 1, mes: this.inputVal })
+      },
+      deleteItem(index) {
+        this.items.splice(index, 1)
+      }
+    },
+    computed: {
+      size() {
+        return this.items.length
+      }
+    },
+    mounted() {
+      axios.get('./data.json').then((res) => {
+        this.items = res.data.items
+      })
+    }
+  }
+)
+</script>
+</body>
+</html>
